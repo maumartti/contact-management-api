@@ -23,7 +23,7 @@ class UserTableSeeder extends Seeder
             User::create([
                 'name' => $item['name'],
                 'email' => $item['email'],
-                'password' => bcrypt('password'), // Coloca aquí la contraseña encriptada
+                'password' => bcrypt($item['password']),
             ]);
         }
     }
