@@ -26,9 +26,9 @@ class User extends Model implements AuthenticatableContract, JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function accounts()
+    public function contacts()
     {
-        return $this->hasMany(Account::class);
+        return $this->hasMany(Contact::class);
     }
 
     /**

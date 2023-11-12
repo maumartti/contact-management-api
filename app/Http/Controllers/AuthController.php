@@ -18,19 +18,22 @@ class AuthController extends Controller
                 'password' => 'required',
             ]);
             if ($validator->fails()) {
-                return response()->json(['error' => 'Error de validación', 'details' => $validator->errors()], 400);
+                return response()->json(['error' => 'Validation error', 'details' => $validator->errors()], 400);
             }
             
             $credentials = $request->only('email', 'password');
             //return $credentials;
 
             if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Credenciales inválidas'], 401);
+                return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
-            return response()->json(compact('token'));
+            $user = JWTAuth::user(); // User autenticado
+            $user->load('contacts');
+            return response()->json(['token' => $token, 'user' => $user]);
+
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error interno del servidor', 'details' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Internal Server Error', 'details' => $e->getMessage()], 500);
         }
     }
 }
