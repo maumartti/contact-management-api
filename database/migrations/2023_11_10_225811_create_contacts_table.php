@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name',20);
             $table->string('email',36);
             $table->string('address');
-            $table->string('image',22);
+            $table->string('image',600);
             $table->string('tel',12);
             $table->unsignedInteger('user_id');
             $table->timestamps();

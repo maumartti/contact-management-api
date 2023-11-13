@@ -3,57 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\User;
-use App\Contact;
-
-
+use App\Models\User;
+use App\Models\Contact;
+use JWTAuth;
 
 class ContactController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        //
-    }
+        try {
+            $user = JWTAuth::parseToken()->authenticate(); // get el user auth
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+            $contact = new Contact();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+            $contact->user_id = $user->id;
+            $contact->name = $request->input('name');
+            $contact->address = $request->input('address');
+            $contact->tel = $request->input('tel');
+            $contact->email = $request->input('email');
+            $contact->image = $request->input('image');
+
+            $contact->save();
+
+            return response()->json(['message' => 'Contact created successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error', 'details' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -61,14 +40,25 @@ class ContactController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
+        try {
+            $contact = Contact::find($id);
+            if (!$contact) {
+                return response()->json(['error' => 'Contact not found'], 404);
+            }
+            $contact->name = $request->input('name');
+            $contact->address = $request->input('address');
+            $contact->tel = $request->input('tel');
+            $contact->email = $request->input('email');
+            $contact->image = $request->input('image');
+    
+            $contact->save();
+    
+            return response()->json(['message' => 'Contact updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error', 'details' => $e->getMessage()], 500);
+        }
     }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+
 }
